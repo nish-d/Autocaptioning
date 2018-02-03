@@ -163,18 +163,18 @@ class AudioGenerator():
                 self.cur_test_index = 0
             yield ret
 
-    def load_train_data(self, desc_file='train_corpus.json'):
+    def load_train_data(self, desc_file='train_corpus1.json'):
         self.load_metadata_from_desc_file(desc_file, 'train')
         self.fit_train()
         if self.sort_by_duration:
             self.sort_data_by_duration('train')
 
-    def load_validation_data(self, desc_file='valid_corpus.json'):
+    def load_validation_data(self, desc_file='valid_corpus1.json'):
         self.load_metadata_from_desc_file(desc_file, 'validation')
         if self.sort_by_duration:
             self.sort_data_by_duration('valid')
 
-    def load_test_data(self, desc_file='test_corpus.json'):
+    def load_test_data(self, desc_file='test_corpus1.json'):
         self.load_metadata_from_desc_file(desc_file, 'test')
     
     def load_metadata_from_desc_file(self, desc_file, partition):
@@ -223,9 +223,15 @@ class AudioGenerator():
             k_samples (int): Use this number of samples for estimation
         """
         k_samples = min(k_samples, len(self.train_audio_paths))
+        #k_samples=len(self.train_audio_paths)
+        print( k_samples , "k_samples")
+        print("len of train_audio_paths " ,len(self.train_audio_paths))
         samples = self.rng.sample(self.train_audio_paths, k_samples)
+        print("len of samples", len(samples))
         feats = [self.featurize(s) for s in samples]
+        print("len of feats" ,len(feats))
         feats = np.vstack(feats)
+        print(len(feats))
         self.feats_mean = np.mean(feats, axis=0)
         self.feats_std = np.std(feats, axis=0)
         
@@ -236,8 +242,8 @@ class AudioGenerator():
         """
         if self.spectrogram:
             return spectrogram_from_file(
-                audio_clip, step=self.step, window=self.window,
-                max_freq=self.max_freq)
+                audio_clip, step=self.step, window=self.window)#,
+                #max_freq=self.max_freq)
         else:
             (rate, sig) = wav.read(audio_clip)
             return mfcc(sig, rate, numcep=self.mfcc_dim)

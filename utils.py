@@ -87,32 +87,38 @@ def spectrogram(samples, fft_length=256, sample_rate=2, hop_length=128):
 
     return x, freqs
 
-
 def spectrogram_from_file(filename, step=10, window=20, max_freq=None,
-                          eps=1e-14):
+                              eps=1e-14):
+
+
     """ Calculate the log of linear spectrogram from FFT energy
     Params:
-        filename (str): Path to the audio file
-        step (int): Step size in milliseconds between windows
-        window (int): FFT window size in milliseconds
-        max_freq (int): Only FFT bins corresponding to frequencies between
-            [0, max_freq] are returned
-        eps (float): Small value to ensure numerical stability (for ln(x))
+    filename (str): Path to the audio file
+    step (int): Step size in milliseconds between windows
+    window (int): FFT window size in milliseconds
+    max_freq (int): Only FFT bins corresponding to frequencies between
+        [0, max_freq] are returned
+    eps (float): Small value to ensure numerical stability (for ln(x))
     """
     with soundfile.SoundFile(filename) as sound_file:
         audio = sound_file.read(dtype='float32')
         sample_rate = sound_file.samplerate
+        #print("sample rate of audio file: ", sample_rate)
         if audio.ndim >= 2:
             audio = np.mean(audio, 1)
+            #print("audio.ndim=", audio.ndim)
         if max_freq is None:
             max_freq = sample_rate / 2
         if max_freq > sample_rate / 2:
             raise ValueError("max_freq must not be greater than half of "
-                             " sample rate")
+                         " sample rate")
+        #print("max freq", max_freq)
         if step > window:
             raise ValueError("step size must not be greater than window size")
         hop_length = int(0.001 * step * sample_rate)
         fft_length = int(0.001 * window * sample_rate)
+        #print("hop_length", hop_length)
+        #print("fft_lenght: ", fft_length)
         pxx, freqs = spectrogram(
             audio, fft_length=fft_length, sample_rate=sample_rate,
             hop_length=hop_length)
