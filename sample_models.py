@@ -1,5 +1,4 @@
 from keras import backend as K
-# from keras import optimizers
 from keras.models import Model
 from keras.layers import (BatchNormalization, Conv1D, Dense, Input, 
     TimeDistributed, Activation, Bidirectional, SimpleRNN, GRU, LSTM)
@@ -107,21 +106,18 @@ def deep_rnn_model(input_dim, units, recur_layers, output_dim=29):
     simp_rnn = []
     bn_cnn = []
     for i in range(0, recur_layers):
-        simp_rnn_active = GRU(units, dropout=0.2, return_sequences=True, implementation=2, name='rnn'+str(i))(previous_input)
+        simp_rnn_active = GRU(units, return_sequences=True, implementation=2, name='rnn'+str(i))(previous_input)
         simp_rnn.append(simp_rnn_active)
         # Batch normalization
         bn_cnn_active = BatchNormalization(name="bn_conv_1d"+str(i))(simp_rnn[i])
         bn_cnn.append(bn_cnn_active)
         previous_input = bn_cnn[i]
-        units=units-40
     # TimeDistributed(Dense(output_dim)) layer
     time_dense = TimeDistributed(Dense(output_dim))(bn_cnn[recur_layers-1])
     # Add softmax activation layer
     y_pred = Activation('softmax', name='softmax')(time_dense)
     # Specify the model
-    #sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     model = Model(inputs=input_data, outputs=y_pred)
-    #model.compile(loss='mean_squared_error', optimizer=sgd)
     model.output_length = lambda x: x
     print(model.summary())
     return model
@@ -201,7 +197,6 @@ def final_model(input_dim, units, recur_layers, output_dim=29):
         bidir_rnn_active = Bidirectional(GRU(units, return_sequences=True, implementation=2, name="rnn"+str(i)))(previous_input)
         bidir_rnn.append(bidir_rnn_active)
         previous_input = bidir_rnn[i]
-        #units=units-40
     # TimeDistributed(Dense(output_dim)) layer
     time_dense = TimeDistributed(Dense(output_dim))(bidir_rnn[recur_layers-1])
     # Add softmax activation layer
