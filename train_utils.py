@@ -34,10 +34,10 @@ def train_model(input_to_softmax,
                 pickle_path,
                 save_model_path,
                 optimizer,
+                spectrogram,
                 train_json='train_corpus.json',
                 valid_json='valid_corpus.json',
                 minibatch_size=20,
-                spectrogram=True,
                 mfcc_dim=13,
                 #optimizer=SGD(lr=0.02, decay=1e-6, momentum=0.9, nesterov=True, clipnorm=5),
                 #optimizer = Adam(lr=0.008, beta_1=0.9, beta_2=0.999, epsilon=1e-8, decay=1e-7,clipnorm=5),
@@ -77,7 +77,6 @@ def train_model(input_to_softmax,
     # train the model
     hist = model.fit_generator(generator=audio_gen.next_train(), steps_per_epoch=steps_per_epoch,
         epochs=epochs, validation_data=audio_gen.next_valid(), validation_steps=validation_steps, callbacks=[checkpointer], verbose=verbose)
-
     # save model loss
     with open('results/'+pickle_path, 'wb') as f:
         pickle.dump(hist.history, f)

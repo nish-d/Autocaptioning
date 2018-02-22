@@ -19,7 +19,7 @@ RNG_SEED = 123
 
 class AudioGenerator():
     def __init__(self, step=10, window=20, max_freq=8000, mfcc_dim=13,
-        minibatch_size=20, desc_file=None, spectrogram=True, max_duration=10.0, 
+        minibatch_size=20, desc_file=None, spectrogram=False, max_duration=10.0, 
         sort_by_duration=False):
         """
         Params:
@@ -163,18 +163,18 @@ class AudioGenerator():
                 self.cur_test_index = 0
             yield ret
 
-    def load_train_data(self, desc_file='train_corpus1.json'):
+    def load_train_data(self, desc_file='train_corpus.json'):
         self.load_metadata_from_desc_file(desc_file, 'train')
         self.fit_train()
         if self.sort_by_duration:
             self.sort_data_by_duration('train')
 
-    def load_validation_data(self, desc_file='valid_corpus1.json'):
+    def load_validation_data(self, desc_file='valid_corpus.json'):
         self.load_metadata_from_desc_file(desc_file, 'validation')
         if self.sort_by_duration:
             self.sort_data_by_duration('valid')
 
-    def load_test_data(self, desc_file='test_corpus1.json'):
+    def load_test_data(self, desc_file='test_corpus.json'):
         self.load_metadata_from_desc_file(desc_file, 'test')
     
     def load_metadata_from_desc_file(self, desc_file, partition):
