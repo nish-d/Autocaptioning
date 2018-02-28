@@ -128,13 +128,13 @@ def deep_rnn_model(input_dim, units, recur_layers, neurons, output_dim=29):
     return model
 
 # model_4
-def bidirectional_rnn_model(input_dim, units, output_dim=29):
+def bidirectional_rnn_model(input_dim, units, cell, output_dim=29):
     """ Build a bidirectional recurrent network for speech
     """
     # Main acoustic input
     input_data = Input(name='the_input', shape=(None, input_dim))
     # Bidirectional recurrent layer
-    bidir_rnn = Bidirectional(GRU(units,
+    bidir_rnn = Bidirectional(cell(units,
         return_sequences=True, implementation=2, name='rnn'))(input_data)
     # TimeDistributed(Dense(output_dim)) layer
     time_dense = TimeDistributed(Dense(output_dim))(bidir_rnn)
@@ -164,6 +164,7 @@ def lstm_model(input_dim, units, output_dim=29):
     return model
 
 # model_6 - deep bidirectional rnn
+#not used anywhere
 def deep_bidirectional_rnn(input_dim, units, recur_layers, output_dim=29):
     """ Build a deep network for speech 
     """
